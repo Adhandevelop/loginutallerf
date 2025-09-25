@@ -10,6 +10,7 @@ class DatabaseConnection {
         console.log('  - Hostname:', window.location.hostname);
         console.log('  - Protocol:', window.location.protocol);
         console.log('  - Port:', window.location.port);
+        console.log('  - Full URL:', window.location.href);
         console.log('  - isDevelopment:', isDevelopment);
         
         // URL del backend - detección automática
