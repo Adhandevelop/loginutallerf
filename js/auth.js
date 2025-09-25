@@ -113,7 +113,7 @@ class AuthSystem {
     // Validadores individuales
     validateUsername(value) {
         if (value.length < 4) return { isValid: false, message: 'Mínimo 4 caracteres' };
-        if (!/^[a-zA-Z0-9._-]+$/.test(value)) return { isValid: false, message: 'Solo letras, números, puntos y guiones' };
+        if (!/^[a-zA-Z]+$/.test(value)) return { isValid: false, message: 'Solo letras permitidas' };
         return { isValid: true };
     }
 
@@ -391,10 +391,10 @@ class AuthSystem {
             return { isValid: false, message: 'El nombre solo puede contener letras y espacios' };
         }
         
-        // Validar que el username no tenga caracteres especiales peligrosos
-        const usernameRegex = /^[a-zA-Z0-9._-]+$/;
+        // Validar que el username solo tenga letras
+        const usernameRegex = /^[a-zA-Z]+$/;
         if (!usernameRegex.test(username)) {
-            return { isValid: false, message: 'El usuario solo puede contener letras, números, puntos, guiones y guiones bajos' };
+            return { isValid: false, message: 'El usuario solo puede contener letras' };
         }
         
         // Validar formato de email básico
