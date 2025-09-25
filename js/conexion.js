@@ -16,7 +16,7 @@ class DatabaseConnection {
         // URL del backend - detección automática
         this.baseURL = isDevelopment 
             ? 'http://localhost:3001/api'
-            : 'https://loginutaller-jzewoae5i-adhams-projects-9fde8db9.vercel.app/api';
+            : 'https://loginutaller.vercel.app/api';
             
         this.token = localStorage.getItem('cine_token');
         
