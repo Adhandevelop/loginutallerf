@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CineMax - Login</title>
+    <link rel="stylesheet" href="styles/style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <div class="login-box">
+        <div class="logo">
+          <h1>🎬 CineMax</h1>
+          <p>Tu cine favorito en línea</p>
+        </div>
+
+        <!-- Toggle para tipo de usuario -->
+        <div class="user-type-toggle" style="margin-bottom: 20px; text-align: center;">
+          <label style="display: inline-flex; align-items: center; gap: 10px;">
+            <span>Cliente</span>
+            <input type="checkbox" id="userTypeToggle" style="transform: scale(1.2);">
+            <span>Trabajador</span>
+          </label>
+        </div>
+
+        <form id="loginForm" class="form">
+          <div class="form-group">
+            <label for="username">Usuario</label>
+            <input type="text" id="username" name="username" required />
+          </div>
+
+          <div class="form-group">
+            <label for="password">Contraseña</label>
+            <input type="password" id="password" name="password" required />
+          </div>
+
+          <button type="submit" class="btn-login" id="loginBtn">
+            <span class="btn-text">Iniciar Sesión</span>
+            <div class="btn-loader" style="display: none">⏳</div>
+          </button>
+        </form>
+
+        <div id="message" class="message"></div>
+
+        <div class="links">
+          <a href="#" class="link">¿Olvidaste tu contraseña?</a>
+          <a href="#" class="link">Crear nueva cuenta</a>
+        </div>
+      </div>
+
+      <div class="dashboard" id="dashboard" style="display: none">
+        <div class="welcome">
+          <h2>¡Bienvenido, <span id="userName"></span>! 🎉</h2>
+          <p id="userRole">Rol: Cliente</p>
+          <p id="userType">Tipo: cliente</p>
+          <p>Has iniciado sesión correctamente en CineMax</p>
+          <button class="btn-logout" id="logoutBtn">Cerrar Sesión</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scripts - conexion.js DEBE ir antes que auth.js -->
+    <script src="js/conexion.js"></script>
+    <script src="js/auth.js"></script>
+  </body>
+</html>
