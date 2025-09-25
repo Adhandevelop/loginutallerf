@@ -23,6 +23,7 @@
           </label>
         </div>
 
+        <!-- Formulario de Login -->
         <form id="loginForm" class="form">
           <div class="form-group">
             <label for="username">Usuario</label>
@@ -40,11 +41,49 @@
           </button>
         </form>
 
+        <!-- Formulario de Registro -->
+        <form id="registerForm" class="form" style="display: none;">
+          <div class="form-group">
+            <label for="regUsername">Usuario</label>
+            <input type="text" id="regUsername" name="username" required />
+          </div>
+
+          <div class="form-group">
+            <label for="regPassword">Contraseña</label>
+            <input type="password" id="regPassword" name="password" required />
+          </div>
+
+          <div class="form-group">
+            <label for="regConfirmPassword">Confirmar Contraseña</label>
+            <input type="password" id="regConfirmPassword" name="confirmPassword" required />
+          </div>
+
+          <div class="form-group">
+            <label for="regNombre">Nombre Completo</label>
+            <input type="text" id="regNombre" name="nombre" required />
+          </div>
+
+          <div class="form-group">
+            <label for="regCorreo">Correo Electrónico</label>
+            <input type="email" id="regCorreo" name="correo" required />
+          </div>
+
+          <div class="form-group">
+            <label for="regTelefono">Teléfono</label>
+            <input type="tel" id="regTelefono" name="telefono" required />
+          </div>
+
+          <button type="submit" class="btn-login" id="registerBtn">
+            <span class="btn-text">Crear Cuenta</span>
+            <div class="btn-loader" style="display: none">⏳</div>
+          </button>
+        </form>
+
         <div id="message" class="message"></div>
 
         <div class="links">
-          <a href="#" class="link">¿Olvidaste tu contraseña?</a>
-          <a href="#" class="link">Crear nueva cuenta</a>
+          <a href="#" class="link" id="showRegister">Crear nueva cuenta</a>
+          <a href="#" class="link" id="showLogin" style="display: none;">Ya tengo cuenta - Iniciar Sesión</a>
         </div>
       </div>
 

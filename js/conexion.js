@@ -89,6 +89,26 @@ class DatabaseConnection {
         });
     }
 
+    // Registro general (cliente o trabajador)
+    async register(username, password, nombre, correo, telefono, userType) {
+        const userData = {
+            username,
+            password,
+            nombre,
+            correo,
+            telefono
+        };
+
+        const endpoint = userType === 'trabajador' 
+            ? '/auth/register/trabajador' 
+            : '/auth/register/cliente';
+
+        return await this.request(endpoint, {
+            method: 'POST',
+            body: JSON.stringify(userData)
+        });
+    }
+
     // Verificar token JWT
     async verifyToken() {
         if (!this.token) {

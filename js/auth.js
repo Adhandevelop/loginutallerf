@@ -6,12 +6,16 @@ class AuthSystem {
     
     init() {
         this.loginForm = document.getElementById('loginForm');
+        this.registerForm = document.getElementById('registerForm');
         this.dashboard = document.getElementById('dashboard');
         this.loginBox = document.querySelector('.login-box');
         this.messageDiv = document.getElementById('message');
         this.loginBtn = document.getElementById('loginBtn');
+        this.registerBtn = document.getElementById('registerBtn');
         this.logoutBtn = document.getElementById('logoutBtn');
         this.userTypeToggle = document.getElementById('userTypeToggle');
+        this.showRegisterLink = document.getElementById('showRegister');
+        this.showLoginLink = document.getElementById('showLogin');
         
         this.bindEvents();
         this.checkAuthStatus();
@@ -19,7 +23,19 @@ class AuthSystem {
     
     bindEvents() {
         this.loginForm.addEventListener('submit', (e) => this.handleLogin(e));
+        this.registerForm.addEventListener('submit', (e) => this.handleRegister(e));
         this.logoutBtn.addEventListener('click', () => this.handleLogout());
+        
+        // Enlaces para cambiar entre login y registro
+        this.showRegisterLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            this.showRegisterForm();
+        });
+        
+        this.showLoginLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            this.showLoginForm();
+        });
         
         // Toggle entre cliente y trabajador
         if (this.userTypeToggle) {
@@ -165,7 +181,7 @@ class AuthSystem {
         }
     }
     
-    showLoading(show) {
+    showLoadingOld(show) {
         if (show) {
             this.loginBtn.innerHTML = '<div class="btn-loader">Cargando...</div>';
             this.loginBtn.disabled = true;
@@ -183,6 +199,102 @@ class AuthSystem {
     
     hideMessage() {
         this.messageDiv.style.display = 'none';
+    }
+
+    // Funciones para manejar el registro
+    async handleRegister(e) {
+        e.preventDefault();
+        
+        const username = document.getElementById('regUsername').value;
+        const password = document.getElementById('regPassword').value;
+        const confirmPassword = document.getElementById('regConfirmPassword').value;
+        const nombre = document.getElementById('regNombre').value;
+        const correo = document.getElementById('regCorreo').value;
+        const telefono = document.getElementById('regTelefono').value;
+        
+        // Validaciones
+        if (password !== confirmPassword) {
+            this.showMessage('Las contraseñas no coinciden', 'error');
+            return;
+        }
+        
+        if (password.length < 6) {
+            this.showMessage('La contraseña debe tener al menos 6 caracteres', 'error');
+            return;
+        }
+        
+        this.showLoading(true, 'register');
+        this.hideMessage();
+        
+        try {
+            const response = await window.DB.register(username, password, nombre, correo, telefono, this.userType);
+            
+            if (response.success) {
+                this.showMessage('¡Cuenta creada exitosamente! Ya puedes iniciar sesión.', 'success');
+                setTimeout(() => {
+                    this.showLoginForm();
+                    this.clearRegisterForm();
+                }, 2000);
+            } else {
+                this.showMessage(response.data.message || 'Error al crear la cuenta', 'error');
+            }
+        } catch (error) {
+            console.error('Error de registro:', error);
+            this.showMessage('Error de conexión. Intenta nuevamente.', 'error');
+        } finally {
+            this.showLoading(false, 'register');
+        }
+    }
+
+    showRegisterForm() {
+        this.loginForm.style.display = 'none';
+        this.registerForm.style.display = 'block';
+        this.showRegisterLink.style.display = 'none';
+        this.showLoginLink.style.display = 'inline';
+        this.hideMessage();
+        
+        // Actualizar título
+        const title = document.querySelector('.logo h1');
+        const subtitle = document.querySelector('.logo p');
+        title.innerHTML = '🎬 CineMax <span style="color: #dc2626;">Registro</span>';
+        subtitle.textContent = 'Crear nueva cuenta';
+    }
+
+    showLoginForm() {
+        this.loginForm.style.display = 'block';
+        this.registerForm.style.display = 'none';
+        this.showRegisterLink.style.display = 'inline';
+        this.showLoginLink.style.display = 'none';
+        this.hideMessage();
+        
+        // Restaurar título
+        this.updateLoginForm();
+    }
+
+    clearRegisterForm() {
+        document.getElementById('regUsername').value = '';
+        document.getElementById('regPassword').value = '';
+        document.getElementById('regConfirmPassword').value = '';
+        document.getElementById('regNombre').value = '';
+        document.getElementById('regCorreo').value = '';
+        document.getElementById('regTelefono').value = '';
+    }
+
+    showLoading(show, form = 'login') {
+        const btnId = form === 'register' ? 'registerBtn' : 'loginBtn';
+        const btn = document.getElementById(btnId);
+        const btnText = btn.querySelector('.btn-text');
+        const btnLoader = btn.querySelector('.btn-loader');
+        
+        if (show) {
+            btn.disabled = true;
+            btnText.style.display = 'none';
+            btnLoader.style.display = 'inline-block';
+        } else {
+            btn.disabled = false;
+            btnText.style.display = 'inline';
+            btnLoader.style.display = 'none';
+        }
     }
 }
 

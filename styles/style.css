@@ -164,13 +164,77 @@ input[type="password"]:focus {
     background: #c82333;
 }
 
+/* Estilos específicos para el formulario de registro */
+#registerForm {
+    animation: fadeIn 0.3s ease;
+}
+
+#registerForm .form-group {
+    margin-bottom: 15px; /* Menos espacio entre campos para el formulario más largo */
+}
+
+#registerForm label {
+    font-size: 0.9em;
+    font-weight: 600;
+}
+
+#registerForm input {
+    padding: 10px 15px; /* Padding ligeramente reducido */
+}
+
+/* Animación de transición */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Enlaces de navegación entre formularios */
+.links {
+    margin-top: 20px;
+}
+
+.links .link {
+    display: inline-block;
+    margin: 0 10px;
+    padding: 8px 12px;
+    background: rgba(220, 38, 38, 0.1);
+    border-radius: 15px;
+    transition: all 0.3s ease;
+}
+
+.links .link:hover {
+    background: rgba(220, 38, 38, 0.2);
+    transform: translateY(-1px);
+}
+
+/* Ajustes para formulario de registro más compacto */
+.login-box {
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
 /* Responsive */
 @media (max-width: 480px) {
     .login-box {
-        padding: 30px 20px;
+        padding: 25px 20px;
+        max-height: 95vh;
     }
     
     .logo h1 {
         font-size: 2em;
+    }
+    
+    #registerForm .form-group {
+        margin-bottom: 12px;
+    }
+    
+    #registerForm input {
+        padding: 8px 12px;
     }
 }
