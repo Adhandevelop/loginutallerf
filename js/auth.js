@@ -37,6 +37,9 @@ class AuthSystem {
             this.showLoginForm();
         });
         
+        // Validación en tiempo real para campos de registro
+        this.bindRealTimeValidation();
+        
         // Toggle entre cliente y trabajador
         if (this.userTypeToggle) {
             this.userTypeToggle.addEventListener('change', (e) => {
@@ -44,6 +47,105 @@ class AuthSystem {
                 this.updateLoginForm();
             });
         }
+    }
+
+    // Validación en tiempo real
+    bindRealTimeValidation() {
+        const fields = [
+            { id: 'regUsername', validator: this.validateUsername },
+            { id: 'regPassword', validator: this.validatePassword },
+            { id: 'regConfirmPassword', validator: this.validateConfirmPassword },
+            { id: 'regNombre', validator: this.validateNombre },
+            { id: 'regCorreo', validator: this.validateCorreo },
+            { id: 'regTelefono', validator: this.validateTelefono }
+        ];
+
+        fields.forEach(field => {
+            const element = document.getElementById(field.id);
+            if (element) {
+                element.addEventListener('blur', () => {
+                    this.validateField(element, field.validator);
+                });
+                element.addEventListener('input', () => {
+                    this.clearFieldError(element);
+                });
+            }
+        });
+    }
+
+    validateField(element, validator) {
+        const result = validator.call(this, element.value);
+        if (!result.isValid) {
+            this.showFieldError(element, result.message);
+        } else {
+            this.clearFieldError(element);
+        }
+    }
+
+    showFieldError(element, message) {
+        this.clearFieldError(element);
+        element.style.borderColor = '#dc2626';
+        element.style.backgroundColor = '#fef2f2';
+        
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'field-error';
+        errorDiv.style.cssText = `
+            color: #dc2626;
+            font-size: 0.8em;
+            margin-top: 5px;
+            display: block;
+        `;
+        errorDiv.textContent = message;
+        
+        element.parentNode.appendChild(errorDiv);
+    }
+
+    clearFieldError(element) {
+        element.style.borderColor = '';
+        element.style.backgroundColor = '';
+        
+        const existingError = element.parentNode.querySelector('.field-error');
+        if (existingError) {
+            existingError.remove();
+        }
+    }
+
+    // Validadores individuales
+    validateUsername(value) {
+        if (value.length < 4) return { isValid: false, message: 'Mínimo 4 caracteres' };
+        if (!/^[a-zA-Z0-9._-]+$/.test(value)) return { isValid: false, message: 'Solo letras, números, puntos y guiones' };
+        return { isValid: true };
+    }
+
+    validatePassword(value) {
+        if (value.length < 9) return { isValid: false, message: 'Mínimo 9 caracteres' };
+        if (value.includes(' ')) return { isValid: false, message: 'No puede contener espacios' };
+        if (!/^[a-zA-Z0-9@#$%^&+=!?._-]+$/.test(value)) return { isValid: false, message: 'Caracteres no permitidos' };
+        return { isValid: true };
+    }
+
+    validateConfirmPassword(value) {
+        const password = document.getElementById('regPassword').value;
+        if (value !== password) return { isValid: false, message: 'Las contraseñas no coinciden' };
+        return { isValid: true };
+    }
+
+    validateNombre(value) {
+        if (value.length < 5) return { isValid: false, message: 'Mínimo 5 caracteres' };
+        if (!/^[a-zA-ZÀ-ÿ\u00f1\u00d1\s]+$/.test(value)) return { isValid: false, message: 'Solo letras y espacios' };
+        return { isValid: true };
+    }
+
+    validateCorreo(value) {
+        if (value.length < 9) return { isValid: false, message: 'Mínimo 9 caracteres' };
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return { isValid: false, message: 'Formato de email inválido' };
+        return { isValid: true };
+    }
+
+    validateTelefono(value) {
+        if (value.length < 9) return { isValid: false, message: 'Mínimo 9 caracteres' };
+        if (!/^[0-9\s\-\(\)\+]+$/.test(value)) return { isValid: false, message: 'Solo números, espacios y guiones' };
+        return { isValid: true };
     }
     
     updateLoginForm() {
@@ -205,21 +307,20 @@ class AuthSystem {
     async handleRegister(e) {
         e.preventDefault();
         
-        const username = document.getElementById('regUsername').value;
+        const username = document.getElementById('regUsername').value.trim();
         const password = document.getElementById('regPassword').value;
         const confirmPassword = document.getElementById('regConfirmPassword').value;
-        const nombre = document.getElementById('regNombre').value;
-        const correo = document.getElementById('regCorreo').value;
-        const telefono = document.getElementById('regTelefono').value;
+        const nombre = document.getElementById('regNombre').value.trim();
+        const correo = document.getElementById('regCorreo').value.trim();
+        const telefono = document.getElementById('regTelefono').value.trim();
         
-        // Validaciones
-        if (password !== confirmPassword) {
-            this.showMessage('Las contraseñas no coinciden', 'error');
-            return;
-        }
+        // Validaciones detalladas
+        const validationResult = this.validateRegistrationData({
+            username, password, confirmPassword, nombre, correo, telefono
+        });
         
-        if (password.length < 6) {
-            this.showMessage('La contraseña debe tener al menos 6 caracteres', 'error');
+        if (!validationResult.isValid) {
+            this.showMessage(validationResult.message, 'error');
             return;
         }
         
@@ -244,6 +345,71 @@ class AuthSystem {
         } finally {
             this.showLoading(false, 'register');
         }
+    }
+
+    // Validaciones detalladas para el registro
+    validateRegistrationData({ username, password, confirmPassword, nombre, correo, telefono }) {
+        // Validar longitud mínima de todos los campos
+        if (username.length < 4) {
+            return { isValid: false, message: 'El usuario debe tener al menos 4 caracteres' };
+        }
+        
+        if (password.length < 9) {
+            return { isValid: false, message: 'La contraseña debe tener al menos 9 caracteres' };
+        }
+        
+        if (nombre.length < 5) {
+            return { isValid: false, message: 'El nombre debe tener al menos 5 caracteres' };
+        }
+        
+        if (correo.length < 9) {
+            return { isValid: false, message: 'El correo debe tener al menos 9 caracteres' };
+        }
+        
+        if (telefono.length < 9) {
+            return { isValid: false, message: 'El teléfono debe tener al menos 9 caracteres' };
+        }
+        
+        // Validar coincidencia de contraseñas
+        if (password !== confirmPassword) {
+            return { isValid: false, message: 'Las contraseñas no coinciden' };
+        }
+        
+        // Validar que la contraseña no tenga espacios ni caracteres peligrosos
+        const passwordRegex = /^[a-zA-Z0-9@#$%^&+=!?._-]+$/;
+        if (!passwordRegex.test(password)) {
+            return { isValid: false, message: 'La contraseña solo puede contener letras, números y estos símbolos: @#$%^&+=!?._-' };
+        }
+        
+        if (password.includes(' ')) {
+            return { isValid: false, message: 'La contraseña no puede contener espacios' };
+        }
+        
+        // Validar que el nombre solo tenga letras y espacios
+        const nombreRegex = /^[a-zA-ZÀ-ÿ\u00f1\u00d1\s]+$/;
+        if (!nombreRegex.test(nombre)) {
+            return { isValid: false, message: 'El nombre solo puede contener letras y espacios' };
+        }
+        
+        // Validar que el username no tenga caracteres especiales peligrosos
+        const usernameRegex = /^[a-zA-Z0-9._-]+$/;
+        if (!usernameRegex.test(username)) {
+            return { isValid: false, message: 'El usuario solo puede contener letras, números, puntos, guiones y guiones bajos' };
+        }
+        
+        // Validar formato de email básico
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(correo)) {
+            return { isValid: false, message: 'El formato del correo electrónico no es válido' };
+        }
+        
+        // Validar que el teléfono solo tenga números, espacios, guiones y paréntesis
+        const telefonoRegex = /^[0-9\s\-\(\)\+]+$/;
+        if (!telefonoRegex.test(telefono)) {
+            return { isValid: false, message: 'El teléfono solo puede contener números, espacios, guiones y paréntesis' };
+        }
+        
+        return { isValid: true, message: 'Datos válidos' };
     }
 
     showRegisterForm() {
