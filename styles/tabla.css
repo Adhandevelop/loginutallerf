@@ -1,0 +1,342 @@
+/* Archivo: tabla.css - Estilos para la página de tabla dedicada */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #dc2626 0%, #1f2937 100%);
+    min-height: 100vh;
+    color: #333;
+}
+
+/* Header */
+.header-container {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 2px solid #dc2626;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.header-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.logo-section h1 {
+    color: #dc2626;
+    font-size: 1.8rem;
+    margin-bottom: 5px;
+}
+
+.logo-section p {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.header-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.action-btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    background: #dc2626;
+    color: white;
+}
+
+.action-btn:hover {
+    background: #b91c1c;
+    transform: translateY(-1px);
+}
+
+.action-btn.secondary {
+    background: #6b7280;
+}
+
+.action-btn.secondary:hover {
+    background: #4b5563;
+}
+
+.action-btn.danger {
+    background: #dc2626;
+}
+
+.action-btn.danger:hover {
+    background: #b91c1c;
+}
+
+/* Main Container */
+.main-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Stats */
+.table-stats {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.stat-label {
+    font-weight: 600;
+    color: #374151;
+}
+
+.stat-value {
+    padding: 6px 12px;
+    background: #f3f4f6;
+    border-radius: 6px;
+    font-weight: 500;
+    color: #dc2626;
+}
+
+/* Table Container */
+.table-container {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    min-height: 400px;
+}
+
+/* Loading Indicator */
+.loading-indicator {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    color: #6b7280;
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f4f6;
+    border-top: 4px solid #dc2626;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 20px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Error Container */
+.error-container {
+    text-align: center;
+    padding: 60px 20px;
+    color: #dc2626;
+}
+
+.error-container h3 {
+    margin-bottom: 15px;
+    font-size: 1.5rem;
+}
+
+.retry-btn {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background: #dc2626;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background 0.3s ease;
+}
+
+.retry-btn:hover {
+    background: #b91c1c;
+}
+
+/* Table Wrapper */
+.table-wrapper {
+    max-height: calc(100vh - 250px);
+    overflow: auto;
+    border-radius: 12px;
+}
+
+/* Data Table */
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+    background: white;
+}
+
+.data-table th {
+    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+    color: white;
+    font-weight: 600;
+    padding: 15px 12px;
+    text-align: left;
+    border-bottom: 2px solid #991b1b;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    white-space: nowrap;
+}
+
+.data-table td {
+    padding: 12px;
+    border-bottom: 1px solid #e5e7eb;
+    vertical-align: top;
+    word-break: break-word;
+    max-width: 200px;
+}
+
+.data-table tr:hover {
+    background: #f9fafb;
+}
+
+.data-table tr.even-row {
+    background: #f8f9fa;
+}
+
+.data-table tr.even-row:hover {
+    background: #f1f3f4;
+}
+
+/* Binary fields styling */
+.binary-field {
+    font-family: 'Courier New', monospace;
+    font-size: 0.8rem;
+    background: #f3f4f6;
+    color: #374151;
+    border-radius: 4px;
+    padding: 4px 6px;
+    max-width: 150px;
+    word-break: break-all;
+}
+
+/* Long text with tooltip */
+.long-text {
+    cursor: help;
+    text-decoration: underline dotted;
+}
+
+/* Section header for dashboard */
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.btn-table {
+    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(220, 38, 38, 0.2);
+}
+
+.btn-table:hover {
+    background: linear-gradient(135deg, #b91c1c 0%, #991b1b 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(220, 38, 38, 0.3);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .header-content {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .header-actions {
+        justify-content: center;
+    }
+    
+    .table-stats {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .main-container {
+        padding: 10px;
+    }
+    
+    .data-table {
+        font-size: 0.75rem;
+    }
+    
+    .data-table th,
+    .data-table td {
+        padding: 8px 6px;
+    }
+    
+    .binary-field {
+        max-width: 100px;
+        font-size: 0.7rem;
+    }
+    
+    .table-wrapper {
+        max-height: calc(100vh - 300px);
+    }
+}
+
+@media (max-width: 480px) {
+    .logo-section h1 {
+        font-size: 1.4rem;
+    }
+    
+    .action-btn {
+        padding: 6px 12px;
+        font-size: 0.8rem;
+    }
+    
+    .data-table {
+        font-size: 0.7rem;
+    }
+    
+    .data-table th,
+    .data-table td {
+        padding: 6px 4px;
+    }
+}

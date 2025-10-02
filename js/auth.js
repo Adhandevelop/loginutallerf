@@ -341,6 +341,7 @@ class AuthSystem {
                 if (actualData && Array.isArray(actualData) && actualData.length > 0) {
                     console.log('✅ Datos encontrados:', actualData.length, 'registros');
                     this.renderDataTable(actualData);
+                    this.showViewTableButton();
                     loadingDiv.style.display = 'none';
                 } else {
                     console.log('⚠️ Respuesta exitosa pero sin datos válidos');
@@ -629,6 +630,21 @@ class AuthSystem {
             btn.disabled = false;
             btnText.style.display = 'inline';
             btnLoader.style.display = 'none';
+        }
+    }
+
+    // Mostrar botón para ver tabla completa
+    showViewTableButton() {
+        const viewTableBtn = document.getElementById('viewFullTableBtn');
+        if (viewTableBtn) {
+            viewTableBtn.style.display = 'inline-block';
+            // Agregar event listener si no existe
+            if (!viewTableBtn.hasEventListener) {
+                viewTableBtn.addEventListener('click', () => {
+                    window.location.href = 'tabla.html';
+                });
+                viewTableBtn.hasEventListener = true;
+            }
         }
     }
 }

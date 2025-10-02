@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tabla de Datos - CineMax</title>
+    <link rel="stylesheet" href="styles/tabla.css">
+</head>
+<body>
+    <div class="header-container">
+        <div class="header-content">
+            <div class="logo-section">
+                <h1>📊 CineMax - Datos Excel</h1>
+                <p>Visualización completa de datos</p>
+            </div>
+            <div class="header-actions">
+                <button id="refreshBtn" class="action-btn">🔄 Actualizar</button>
+                <button id="backBtn" class="action-btn secondary">← Volver al Dashboard</button>
+                <button id="logoutBtn" class="action-btn danger">🚪 Salir</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <div class="table-stats">
+            <div class="stat-item">
+                <span class="stat-label">Total de registros:</span>
+                <span id="totalRecords" class="stat-value">Cargando...</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Estado:</span>
+                <span id="loadingStatus" class="stat-value">Conectando...</span>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <div id="loadingIndicator" class="loading-indicator">
+                <div class="spinner"></div>
+                <p>Cargando datos...</p>
+            </div>
+            
+            <div id="errorContainer" class="error-container" style="display: none;">
+                <h3>⚠️ Error al cargar datos</h3>
+                <p id="errorMessage">Ha ocurrido un error inesperado</p>
+                <button id="retryBtn" class="retry-btn">🔄 Intentar de nuevo</button>
+            </div>
+
+            <div id="tableWrapper" class="table-wrapper" style="display: none;">
+                <table id="dataTable" class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Número Contrato</th>
+                            <th>Contratista</th>
+                            <th>Identificación</th>
+                            <th>Objeto</th>
+                            <th>CDP</th>
+                            <th>Tiempo</th>
+                            <th>Valor Contrato</th>
+                            <th>Unidad</th>
+                            <th>Rubro</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Los datos se cargarán dinámicamente -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/conexion.js"></script>
+    <script src="js/tabla.js"></script>
+</body>
+</html>
