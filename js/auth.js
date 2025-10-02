@@ -327,7 +327,7 @@ class AuthSystem {
                 return;
             }
             
-            console.log('✅ Tabla encontrada con', verificationData.recordCount, 'registros');
+            console.log('✅ Tabla encontrada con', verificationData.recordCount || 'desconocido', 'registros');
             
             console.log('🔍 Solicitando datos de datosexcel...');
             const response = await window.DB.getDatosExcel();
@@ -335,15 +335,19 @@ class AuthSystem {
             console.log('📡 Respuesta recibida:', response);
             
             if (response.success) {
-                if (response.data && response.data.length > 0) {
-                    console.log('✅ Datos encontrados:', response.data.length, 'registros');
-                    this.renderDataTable(response.data);
+                // Los datos están en response.data.data
+                const actualData = response.data?.data || response.data;
+                
+                if (actualData && Array.isArray(actualData) && actualData.length > 0) {
+                    console.log('✅ Datos encontrados:', actualData.length, 'registros');
+                    this.renderDataTable(actualData);
                     loadingDiv.style.display = 'none';
                 } else {
-                    console.log('⚠️ Respuesta exitosa pero sin datos');
+                    console.log('⚠️ Respuesta exitosa pero sin datos válidos');
+                    console.log('🔍 Estructura de response.data:', response.data);
                     loadingDiv.style.display = 'none';
                     errorDiv.style.display = 'block';
-                    errorDiv.innerHTML = `<p>📋 La tabla está vacía - No hay contratos registrados</p>`;
+                    errorDiv.innerHTML = `<p>📋 Error procesando los datos recibidos</p>`;
                 }
             } else {
                 throw new Error(response.data?.message || response.message || 'Error del servidor');
