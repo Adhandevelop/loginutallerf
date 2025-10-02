@@ -24,7 +24,12 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function initializeTable() {
+    // Variables de estado
+    let currentData = null;
+    let showAsText = false; // false = formato binario, true = texto normal
+    
     // Elementos del DOM
+    const toggleBinaryBtn = document.getElementById('toggleBinaryBtn');
     const refreshBtn = document.getElementById('refreshBtn');
     const backBtn = document.getElementById('backBtn');
     const logoutBtn = document.getElementById('logoutBtn');
@@ -38,6 +43,7 @@ function initializeTable() {
     const errorMessage = document.getElementById('errorMessage');
 
     // Event listeners
+    toggleBinaryBtn.addEventListener('click', toggleBinaryFormat);
     refreshBtn.addEventListener('click', loadTableData);
     backBtn.addEventListener('click', () => window.location.href = 'index.html');
     logoutBtn.addEventListener('click', logout);
@@ -91,6 +97,7 @@ function initializeTable() {
     }
 
     function renderTable(data) {
+        currentData = data; // Guardar datos para re-render
         const tbody = dataTable.querySelector('tbody');
         tbody.innerHTML = '';
 
@@ -100,11 +107,11 @@ function initializeTable() {
                 <td>${row.id || ''}</td>
                 <td>${formatValue(row.nrocto)}</td>
                 <td>${formatValue(row.contratista)}</td>
-                <td class="binary-field">${formatValue(row.identificacion)}</td>
+                <td class="binary-field">${formatValue(row.identificacion, 'identificacion')}</td>
                 <td>${formatValue(row.objeto)}</td>
                 <td>${formatValue(row.cdp)}</td>
                 <td>${formatValue(row.tiempo)}</td>
-                <td class="binary-field">${formatValue(row.vrcto)}</td>
+                <td class="binary-field">${formatValue(row.vrcto, 'vrcto')}</td>
                 <td>${formatValue(row.unidad)}</td>
                 <td>${formatValue(row.rubro)}</td>
             `;
@@ -118,8 +125,22 @@ function initializeTable() {
         });
     }
 
-    function formatValue(value) {
+    function formatValue(value, columnName) {
         if (!value && value !== 0) return '';
+        
+        // Para campos binarios (identificacion y vrcto)
+        if ((columnName === 'identificacion' || columnName === 'vrcto') && 
+            typeof value === 'string' && value.startsWith('\\x')) {
+            
+            if (showAsText) {
+                // Convertir hexadecimal a texto legible
+                const convertedText = hexToText(value);
+                return `<span class="converted-text" title="Original: ${value}">${convertedText}</span>`;
+            } else {
+                // Mostrar formato hexadecimal original
+                return `<span class="hex-text" title="Hex format">${value}</span>`;
+            }
+        }
         
         // Para valores muy largos, mostrar con tooltip
         if (typeof value === 'string' && value.length > 100) {
@@ -127,6 +148,53 @@ function initializeTable() {
         }
         
         return value;
+    }
+
+    // Función para convertir hexadecimal a texto
+    function hexToText(hexString) {
+        try {
+            // Remover los \x y convertir a texto
+            const hex = hexString.replace(/\\x/g, '');
+            let result = '';
+            
+            for (let i = 0; i < hex.length; i += 2) {
+                const hexPair = hex.substr(i, 2);
+                const charCode = parseInt(hexPair, 16);
+                
+                // Solo agregar caracteres imprimibles
+                if (charCode >= 32 && charCode <= 126) {
+                    result += String.fromCharCode(charCode);
+                } else if (charCode === 46) { // punto decimal
+                    result += '.';
+                } else {
+                    result += '?'; // Para caracteres no imprimibles
+                }
+            }
+            
+            return result || 'No convertible';
+            
+        } catch (error) {
+            console.error('Error convirtiendo hex a texto:', error);
+            return 'Error de conversión';
+        }
+    }
+
+    // Función para alternar entre formato binario y texto
+    function toggleBinaryFormat() {
+        showAsText = !showAsText;
+        
+        // Actualizar texto del botón
+        toggleBinaryBtn.textContent = showAsText 
+            ? '🔢 Mostrar Formato Hex' 
+            : '📝 Mostrar Texto Normal';
+            
+        // Actualizar clase del botón
+        toggleBinaryBtn.classList.toggle('active', showAsText);
+        
+        // Re-renderizar la tabla si hay datos
+        if (currentData) {
+            renderTable(currentData);
+        }
     }
 
     function showLoading() {
