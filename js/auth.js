@@ -401,8 +401,13 @@ class AuthSystem {
         const formatValue = (value, columnName) => {
             if (!value && value !== 0) return '';
             
-            // Para campos que pueden ser BYTES pero contienen texto
-            if (columnName === 'identificacion' || columnName === 'vrcto') {
+            // Para identificacion: mostrar tal como viene de la BD sin procesar
+            if (columnName === 'identificacion') {
+                return value;
+            }
+            
+            // Para vrcto: procesar si es necesario
+            if (columnName === 'vrcto') {
                 // Si es un objeto Buffer/Array, intentar convertir a string
                 if (typeof value === 'object' && value.data) {
                     try {
