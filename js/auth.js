@@ -401,13 +401,9 @@ class AuthSystem {
         const formatValue = (value, columnName) => {
             if (!value && value !== 0) return '';
             
-            // Si el valor es un objeto no procesado, mostrar información útil
-            if (typeof value === 'object') {
-                return '[Datos binarios]';
-            }
-            
-            // Truncar texto muy largo para columnas específicas
-            if (typeof value === 'string' && value.length > 50 && columnName !== 'identificacion') {
+            // Truncar texto muy largo para algunas columnas
+            if (typeof value === 'string' && value.length > 50 && 
+                columnName !== 'identificacion' && columnName !== 'contratista') {
                 return value.substring(0, 47) + '...';
             }
             
