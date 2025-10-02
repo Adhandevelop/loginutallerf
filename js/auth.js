@@ -401,40 +401,13 @@ class AuthSystem {
         const formatValue = (value, columnName) => {
             if (!value && value !== 0) return '';
             
-            // Para identificacion: mostrar tal como viene de la BD sin procesar
-            if (columnName === 'identificacion') {
-                return value;
+            // Si el valor es un objeto no procesado, mostrar información útil
+            if (typeof value === 'object') {
+                return '[Datos binarios]';
             }
             
-            // Para vrcto: procesar si es necesario
-            if (columnName === 'vrcto') {
-                // Si es un objeto Buffer/Array, intentar convertir a string
-                if (typeof value === 'object' && value.data) {
-                    try {
-                        const text = String.fromCharCode.apply(null, value.data);
-                        return text || '[Datos no legibles]';
-                    } catch (e) {
-                        return '[Datos binarios]';
-                    }
-                }
-                // Si ya es string, mostrarlo directamente
-                if (typeof value === 'string') {
-                    return value;
-                }
-                // Si es array de números, convertir a string
-                if (Array.isArray(value)) {
-                    try {
-                        const text = String.fromCharCode.apply(null, value);
-                        return text || '[Datos no legibles]';
-                    } catch (e) {
-                        return '[Datos binarios]';
-                    }
-                }
-                return value;
-            }
-            
-            // Truncar texto muy largo para otras columnas
-            if (typeof value === 'string' && value.length > 50) {
+            // Truncar texto muy largo para columnas específicas
+            if (typeof value === 'string' && value.length > 50 && columnName !== 'identificacion') {
                 return value.substring(0, 47) + '...';
             }
             
