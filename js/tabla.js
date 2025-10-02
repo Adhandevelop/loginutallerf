@@ -1,13 +1,30 @@
 // Archivo: tabla.js - Manejo de la página de tabla dedicada
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Verificar autenticación
+    // Verificar autenticación más detallada
     const token = localStorage.getItem('token');
-    if (!token) {
+    const user = localStorage.getItem('user');
+    
+    console.log('🔐 Verificando autenticación en tabla.html...');
+    console.log('Token existe:', !!token);
+    console.log('Usuario existe:', !!user);
+    
+    if (!token || !user) {
+        console.log('❌ Sin autenticación válida, redirigiendo...');
+        alert('Sesión expirada. Serás redirigido al login.');
         window.location.href = 'index.html';
         return;
     }
+    
+    console.log('✅ Autenticación válida, cargando tabla...');
 
+    // Pequeño retraso para asegurar que conexion.js se cargue
+    setTimeout(() => {
+        initializeTable();
+    }, 100);
+});
+
+function initializeTable() {
     // Elementos del DOM
     const refreshBtn = document.getElementById('refreshBtn');
     const backBtn = document.getElementById('backBtn');
@@ -122,29 +139,13 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Funciones auxiliares que deberían estar disponibles globalmente
+    // Usar la función getDatosExcel de conexion.js
     async function getDatosExcel() {
-        const token = localStorage.getItem('token');
-        if (!token) {
-            throw new Error('No hay token de autenticación');
+        // Verificar que window.DB esté disponible
+        if (!window.DB || !window.DB.getDatosExcel) {
+            throw new Error('Sistema de conexión no disponible');
         }
-
-        const apiUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-            ? 'http://localhost:3000'
-            : 'https://login-utaller.vercel.app';
-
-        const response = await fetch(`${apiUrl}/api/auth/datos-excel`, {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
-            }
-        });
-
-        if (!response.ok) {
-            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-        }
-
-        return await response.json();
+        
+        return await window.DB.getDatosExcel();
     }
-});
+}
