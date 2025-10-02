@@ -285,7 +285,10 @@ class AuthSystem {
             const verification = await window.DB.verificarTabla();
             console.log('📋 Verificación de tabla:', verification);
             
-            if (!verification.success || !verification.tableExists) {
+            // Extraer datos de la respuesta correctamente
+            const verificationData = verification.data || verification;
+            
+            if (!verification.success || !verificationData.tableExists) {
                 // Listar todas las tablas disponibles para diagnóstico
                 console.log('📋 Listando todas las tablas disponibles...');
                 const allTables = await window.DB.listarTablas();
@@ -296,15 +299,15 @@ class AuthSystem {
                 
                 let errorHTML = '<p>❌ La tabla datosexcel no existe</p>';
                 
-                if (verification.possibleTables && verification.possibleTables.length > 0) {
+                if (verificationData.possibleTables && verificationData.possibleTables.length > 0) {
                     errorHTML += '<p><strong>💡 Tablas relacionadas encontradas:</strong></p><ul>';
-                    verification.possibleTables.forEach(table => {
+                    verificationData.possibleTables.forEach(table => {
                         errorHTML += `<li><strong>${table.name}</strong> (${table.count} registros)</li>`;
                     });
                     errorHTML += '</ul>';
-                } else if (allTables.success && allTables.tables.length > 0) {
+                } else if (allTables.success && allTables.data && allTables.data.tables && allTables.data.tables.length > 0) {
                     errorHTML += '<p><strong>📋 Tablas disponibles en la BD:</strong></p><ul>';
-                    allTables.tables.forEach(table => {
+                    allTables.data.tables.forEach(table => {
                         errorHTML += `<li>${table.table_name} (esquema: ${table.table_schema})</li>`;
                     });
                     errorHTML += '</ul>';
@@ -316,12 +319,15 @@ class AuthSystem {
                 return;
             }
             
-            if (verification.possibleTables && verification.possibleTables.some(t => t.count === 0)) {
+            // Verificar si tiene datos
+            if (verificationData.recordCount === 0) {
                 loadingDiv.style.display = 'none';
                 errorDiv.style.display = 'block';
-                errorDiv.innerHTML = `<p>📋 Las tablas existen pero están vacías (0 registros)</p>`;
+                errorDiv.innerHTML = `<p>📋 La tabla existe pero está vacía (0 registros)</p>`;
                 return;
             }
+            
+            console.log('✅ Tabla encontrada con', verificationData.recordCount, 'registros');
             
             console.log('🔍 Solicitando datos de datosexcel...');
             const response = await window.DB.getDatosExcel();
