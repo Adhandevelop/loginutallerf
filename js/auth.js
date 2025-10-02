@@ -308,22 +308,56 @@ class AuthSystem {
         // Obtener columnas del primer registro
         const columns = Object.keys(data[0]);
         
+        // Nombres más legibles para las columnas
+        const columnNames = {
+            'id': 'ID',
+            'nrocto': 'Nro. Contrato',
+            'contratista': 'Contratista',
+            'identificacion': 'Identificación',
+            'objeto': 'Objeto',
+            'cdp': 'CDP',
+            'tiempo': 'Tiempo',
+            'vrcto': 'Valor Contrato',
+            'unidad': 'Unidad',
+            'rubro': 'Rubro'
+        };
+        
+        // Función para formatear valores
+        const formatValue = (value, columnName) => {
+            if (!value && value !== 0) return '';
+            
+            // Para campos de bytes, mostrar información más legible
+            if (columnName === 'identificacion' || columnName === 'vrcto') {
+                if (typeof value === 'object') {
+                    return '[Datos binarios]';
+                }
+                return value;
+            }
+            
+            // Truncar texto muy largo
+            if (typeof value === 'string' && value.length > 50) {
+                return value.substring(0, 47) + '...';
+            }
+            
+            return value;
+        };
+        
         // Crear tabla HTML
         let tableHTML = `
             <div class="table-header">
-                <p>📋 Total de registros: ${data.length}</p>
+                <p>📋 Datos de Contratos - Total de registros: ${data.length}</p>
             </div>
             <div class="table-wrapper">
                 <table class="excel-table">
                     <thead>
                         <tr>
-                            ${columns.map(col => `<th>${col}</th>`).join('')}
+                            ${columns.map(col => `<th title="${col}">${columnNames[col] || col}</th>`).join('')}
                         </tr>
                     </thead>
                     <tbody>
                         ${data.map(row => `
                             <tr>
-                                ${columns.map(col => `<td>${row[col] || ''}</td>`).join('')}
+                                ${columns.map(col => `<td title="${row[col] || ''}">${formatValue(row[col], col)}</td>`).join('')}
                             </tr>
                         `).join('')}
                     </tbody>
