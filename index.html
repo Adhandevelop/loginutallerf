@@ -95,6 +95,20 @@
           <p>Has iniciado sesión correctamente en CineMax</p>
           <button class="btn-logout" id="logoutBtn">Cerrar Sesión</button>
         </div>
+
+        <!-- Sección de datos Excel -->
+        <div class="datos-section">
+          <h3>📊 Datos del Sistema</h3>
+          <div id="loadingData" class="loading-data" style="display: none;">
+            <p>⏳ Cargando datos...</p>
+          </div>
+          <div id="dataError" class="data-error" style="display: none;">
+            <p>❌ Error cargando los datos</p>
+          </div>
+          <div id="dataContainer" class="data-container">
+            <div id="dataTable" class="data-table"></div>
+          </div>
+        </div>
       </div>
     </div>
 

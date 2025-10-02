@@ -265,6 +265,73 @@ class AuthSystem {
         
         this.loginBox.style.display = 'none';
         this.dashboard.style.display = 'block';
+        
+        // Cargar datos de Excel después de mostrar el dashboard
+        this.loadDatosExcel();
+    }
+
+    async loadDatosExcel() {
+        const loadingDiv = document.getElementById('loadingData');
+        const errorDiv = document.getElementById('dataError');
+        const tableDiv = document.getElementById('dataTable');
+        
+        // Mostrar loading
+        loadingDiv.style.display = 'block';
+        errorDiv.style.display = 'none';
+        tableDiv.innerHTML = '';
+        
+        try {
+            const response = await window.DB.getDatosExcel();
+            
+            if (response.success && response.data && response.data.length > 0) {
+                this.renderDataTable(response.data);
+                loadingDiv.style.display = 'none';
+            } else {
+                throw new Error('No hay datos disponibles');
+            }
+        } catch (error) {
+            console.error('Error cargando datos Excel:', error);
+            loadingDiv.style.display = 'none';
+            errorDiv.style.display = 'block';
+            errorDiv.innerHTML = `<p>❌ Error: ${error.message}</p>`;
+        }
+    }
+
+    renderDataTable(data) {
+        const tableDiv = document.getElementById('dataTable');
+        
+        if (!data || data.length === 0) {
+            tableDiv.innerHTML = '<p>No hay datos para mostrar</p>';
+            return;
+        }
+        
+        // Obtener columnas del primer registro
+        const columns = Object.keys(data[0]);
+        
+        // Crear tabla HTML
+        let tableHTML = `
+            <div class="table-header">
+                <p>📋 Total de registros: ${data.length}</p>
+            </div>
+            <div class="table-wrapper">
+                <table class="excel-table">
+                    <thead>
+                        <tr>
+                            ${columns.map(col => `<th>${col}</th>`).join('')}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${data.map(row => `
+                            <tr>
+                                ${columns.map(col => `<td>${row[col] || ''}</td>`).join('')}
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            </div>
+        `;
+        
+        tableDiv.innerHTML = tableHTML;
     }
     
     handleLogout() {

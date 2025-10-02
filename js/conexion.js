@@ -151,6 +151,11 @@ class DatabaseConnection {
     isAuthenticated() {
         return !!this.token;
     }
+
+    // Obtener datos de la tabla datosExcel
+    async getDatosExcel() {
+        return await this.request('/auth/datos-excel');
+    }
 }
 
 // Crear instancia global para usar en toda la aplicación
