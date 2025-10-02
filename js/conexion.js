@@ -26,10 +26,12 @@ class DatabaseConnection {
     // Método genérico para hacer peticiones HTTP
     async request(endpoint, options = {}) {
         const url = `${this.baseURL}${endpoint}`;
+        // Obtener el token actualizado en cada petición
+        const currentToken = localStorage.getItem('cine_token');
         const config = {
             headers: {
                 'Content-Type': 'application/json',
-                ...(this.token && { Authorization: `Bearer ${this.token}` })
+                ...(currentToken && { Authorization: `Bearer ${currentToken}` })
             },
             ...options
         };

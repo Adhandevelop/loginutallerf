@@ -52,19 +52,40 @@ function initializeTable() {
         try {
             loadingStatus.textContent = 'Obteniendo datos...';
             
+            console.log('🔍 Solicitando datos...');
             const response = await getDatosExcel();
             
-            if (response.success && response.data && response.data.length > 0) {
-                renderTable(response.data);
-                totalRecords.textContent = response.data.length;
-                loadingStatus.textContent = 'Datos cargados correctamente';
-                showTable();
+            console.log('📡 Respuesta recibida:', response);
+            
+            if (response.success) {
+                // Los datos pueden estar en response.data.data o response.data
+                const actualData = response.data?.data || response.data;
+                
+                console.log('📊 Datos procesados:', actualData);
+                
+                if (actualData && Array.isArray(actualData) && actualData.length > 0) {
+                    console.log('✅ Datos encontrados:', actualData.length, 'registros');
+                    renderTable(actualData);
+                    totalRecords.textContent = actualData.length;
+                    loadingStatus.textContent = 'Datos cargados correctamente';
+                    showTable();
+                } else {
+                    console.log('⚠️ Respuesta exitosa pero sin datos válidos');
+                    showError('No se encontraron datos válidos');
+                }
             } else {
-                showError(response.error || 'No se encontraron datos');
+                console.log('❌ Error en respuesta:', response.error);
+                showError(response.error || 'Error al obtener datos');
             }
             
         } catch (error) {
-            console.error('Error cargando datos:', error);
+            console.error('❌ Error cargando datos:', error);
+            console.error('❌ Detalles del error:', {
+                message: error.message,
+                stack: error.stack,
+                windowDB: !!window.DB,
+                token: !!localStorage.getItem('cine_token')
+            });
             showError('Error de conexión: ' + error.message);
         }
     }
