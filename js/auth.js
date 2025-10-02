@@ -401,15 +401,34 @@ class AuthSystem {
         const formatValue = (value, columnName) => {
             if (!value && value !== 0) return '';
             
-            // Para campos de bytes, mostrar información más legible
+            // Para campos que pueden ser BYTES pero contienen texto
             if (columnName === 'identificacion' || columnName === 'vrcto') {
-                if (typeof value === 'object') {
-                    return '[Datos binarios]';
+                // Si es un objeto Buffer/Array, intentar convertir a string
+                if (typeof value === 'object' && value.data) {
+                    try {
+                        const text = String.fromCharCode.apply(null, value.data);
+                        return text || '[Datos no legibles]';
+                    } catch (e) {
+                        return '[Datos binarios]';
+                    }
+                }
+                // Si ya es string, mostrarlo directamente
+                if (typeof value === 'string') {
+                    return value;
+                }
+                // Si es array de números, convertir a string
+                if (Array.isArray(value)) {
+                    try {
+                        const text = String.fromCharCode.apply(null, value);
+                        return text || '[Datos no legibles]';
+                    } catch (e) {
+                        return '[Datos binarios]';
+                    }
                 }
                 return value;
             }
             
-            // Truncar texto muy largo
+            // Truncar texto muy largo para otras columnas
             if (typeof value === 'string' && value.length > 50) {
                 return value.substring(0, 47) + '...';
             }
