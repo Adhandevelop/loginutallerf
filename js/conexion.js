@@ -161,6 +161,11 @@ class DatabaseConnection {
     async verificarTabla() {
         return await this.request('/auth/verificar-tabla');
     }
+
+    // Listar todas las tablas
+    async listarTablas() {
+        return await this.request('/auth/listar-tablas');
+    }
 }
 
 // Crear instancia global para usar en toda la aplicación

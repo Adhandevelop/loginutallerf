@@ -247,9 +247,26 @@ input[type="password"]:focus {
 }
 
 .loading-data, .data-error {
-    text-align: center;
+    text-align: left;
     padding: 20px;
     margin: 20px 0;
+    background: #f8f9fa;
+    border-radius: 10px;
+    border-left: 4px solid #dc2626;
+}
+
+.data-error ul {
+    margin: 10px 0;
+    padding-left: 20px;
+}
+
+.data-error li {
+    margin: 5px 0;
+    font-family: monospace;
+    background: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
 }
 
 .table-header {

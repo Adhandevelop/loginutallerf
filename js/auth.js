@@ -286,13 +286,40 @@ class AuthSystem {
             console.log('📋 Verificación de tabla:', verification);
             
             if (!verification.success || !verification.tableExists) {
-                throw new Error('La tabla datosexcel no existe en la base de datos');
-            }
-            
-            if (verification.recordCount === 0) {
+                // Listar todas las tablas disponibles para diagnóstico
+                console.log('📋 Listando todas las tablas disponibles...');
+                const allTables = await window.DB.listarTablas();
+                console.log('📋 Tablas disponibles:', allTables);
+                
                 loadingDiv.style.display = 'none';
                 errorDiv.style.display = 'block';
-                errorDiv.innerHTML = `<p>📋 La tabla existe pero está vacía (0 registros)</p>`;
+                
+                let errorHTML = '<p>❌ La tabla datosexcel no existe</p>';
+                
+                if (verification.possibleTables && verification.possibleTables.length > 0) {
+                    errorHTML += '<p><strong>💡 Tablas relacionadas encontradas:</strong></p><ul>';
+                    verification.possibleTables.forEach(table => {
+                        errorHTML += `<li><strong>${table.name}</strong> (${table.count} registros)</li>`;
+                    });
+                    errorHTML += '</ul>';
+                } else if (allTables.success && allTables.tables.length > 0) {
+                    errorHTML += '<p><strong>📋 Tablas disponibles en la BD:</strong></p><ul>';
+                    allTables.tables.forEach(table => {
+                        errorHTML += `<li>${table.table_name} (esquema: ${table.table_schema})</li>`;
+                    });
+                    errorHTML += '</ul>';
+                } else {
+                    errorHTML += '<p>🔍 No se pudieron listar las tablas disponibles</p>';
+                }
+                
+                errorDiv.innerHTML = errorHTML;
+                return;
+            }
+            
+            if (verification.possibleTables && verification.possibleTables.some(t => t.count === 0)) {
+                loadingDiv.style.display = 'none';
+                errorDiv.style.display = 'block';
+                errorDiv.innerHTML = `<p>📋 Las tablas existen pero están vacías (0 registros)</p>`;
                 return;
             }
             
