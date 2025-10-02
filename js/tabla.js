@@ -1,17 +1,16 @@
 // Archivo: tabla.js - Manejo de la página de tabla dedicada
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Verificar autenticación más detallada
-    const token = localStorage.getItem('token');
-    const user = localStorage.getItem('user');
+    // Verificación de autenticación usando las claves correctas
+    const token = localStorage.getItem('cine_token');
+    const user = localStorage.getItem('cine_user');
     
     console.log('🔐 Verificando autenticación en tabla.html...');
     console.log('Token existe:', !!token);
     console.log('Usuario existe:', !!user);
     
     if (!token || !user) {
-        console.log('❌ Sin autenticación válida, redirigiendo...');
-        alert('Sesión expirada. Serás redirigido al login.');
+        console.log('❌ Sin autenticación válida, redirigiendo al login...');
         window.location.href = 'index.html';
         return;
     }
@@ -133,8 +132,8 @@ function initializeTable() {
 
     function logout() {
         if (confirm('¿Estás seguro de que quieres cerrar sesión?')) {
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
+            localStorage.removeItem('cine_token');
+            localStorage.removeItem('cine_user');
             window.location.href = 'index.html';
         }
     }
