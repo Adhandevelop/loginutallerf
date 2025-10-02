@@ -156,6 +156,11 @@ class DatabaseConnection {
     async getDatosExcel() {
         return await this.request('/auth/datos-excel');
     }
+
+    // Verificar tabla datosexcel
+    async verificarTabla() {
+        return await this.request('/auth/verificar-tabla');
+    }
 }
 
 // Crear instancia global para usar en toda la aplicación

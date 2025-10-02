@@ -281,19 +281,57 @@ class AuthSystem {
         tableDiv.innerHTML = '';
         
         try {
+            console.log('🔍 Verificando tabla datosexcel...');
+            const verification = await window.DB.verificarTabla();
+            console.log('📋 Verificación de tabla:', verification);
+            
+            if (!verification.success || !verification.tableExists) {
+                throw new Error('La tabla datosexcel no existe en la base de datos');
+            }
+            
+            if (verification.recordCount === 0) {
+                loadingDiv.style.display = 'none';
+                errorDiv.style.display = 'block';
+                errorDiv.innerHTML = `<p>📋 La tabla existe pero está vacía (0 registros)</p>`;
+                return;
+            }
+            
+            console.log('🔍 Solicitando datos de datosexcel...');
             const response = await window.DB.getDatosExcel();
             
-            if (response.success && response.data && response.data.length > 0) {
-                this.renderDataTable(response.data);
-                loadingDiv.style.display = 'none';
+            console.log('📡 Respuesta recibida:', response);
+            
+            if (response.success) {
+                if (response.data && response.data.length > 0) {
+                    console.log('✅ Datos encontrados:', response.data.length, 'registros');
+                    this.renderDataTable(response.data);
+                    loadingDiv.style.display = 'none';
+                } else {
+                    console.log('⚠️ Respuesta exitosa pero sin datos');
+                    loadingDiv.style.display = 'none';
+                    errorDiv.style.display = 'block';
+                    errorDiv.innerHTML = `<p>📋 La tabla está vacía - No hay contratos registrados</p>`;
+                }
             } else {
-                throw new Error('No hay datos disponibles');
+                throw new Error(response.data?.message || response.message || 'Error del servidor');
             }
         } catch (error) {
-            console.error('Error cargando datos Excel:', error);
+            console.error('❌ Error completo:', error);
+            console.error('📡 Respuesta de error:', error.response || error);
             loadingDiv.style.display = 'none';
             errorDiv.style.display = 'block';
-            errorDiv.innerHTML = `<p>❌ Error: ${error.message}</p>`;
+            
+            let errorMessage = 'Error desconocido';
+            if (error.message) {
+                errorMessage = error.message;
+            } else if (error.data && error.data.message) {
+                errorMessage = error.data.message;
+            }
+            
+            errorDiv.innerHTML = `
+                <p>❌ Error cargando datos: ${errorMessage}</p>
+                <p><small>Revisa la consola para más detalles</small></p>
+            `;
         }
     }
 
